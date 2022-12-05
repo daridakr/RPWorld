@@ -1,12 +1,15 @@
 using Photon.Pun;
 using Photon.Realtime;
 using UnityEngine;
+using UnityEngine.Events;
 
 namespace Com.Daridakr.RPWorld
 {
     public class Launcher : MonoBehaviourPunCallbacks
     {
-        private string gameVersion = "1";
+        private string _gameVersion = "1";
+
+        public event UnityAction<ClientState> OnStateChanged;
 
         private void Awake()
         {
@@ -15,24 +18,33 @@ namespace Com.Daridakr.RPWorld
 
         private void Start()
         {
-            Connect();
+            ConnectToMaster();
         }
 
-        public void Connect()
+        public void ConnectToMaster()
         {
             PhotonNetwork.ConnectUsingSettings();
-            PhotonNetwork.GameVersion = gameVersion;
+            PhotonNetwork.GameVersion = _gameVersion;
+
+            OnStateChanged?.Invoke(PhotonNetwork.NetworkClientState);
         }
 
         public override void OnConnectedToMaster()
         {
-            Debug.Log("PUN Basics Tutorial/Launcher: OnConnectedToMaster() was called by PUN");
+            PhotonNetwork.JoinLobby();
+
+            OnStateChanged?.Invoke(PhotonNetwork.NetworkClientState);
         }
 
+        public override void OnJoinedLobby()
+        {
+            OnStateChanged?.Invoke(PhotonNetwork.NetworkClientState);
+        }
 
         public override void OnDisconnected(DisconnectCause cause)
         {
-            Debug.LogWarningFormat("PUN Basics Tutorial/Launcher: OnDisconnected() was called by PUN with reason {0}", cause);
-        }
+            Debug.Log(PhotonNetwork.NetworkClientState);
+            OnStateChanged?.Invoke(PhotonNetwork.NetworkClientState);
+        }  
     }
 }
