@@ -29,7 +29,7 @@ namespace Com.Daridakr.RPWorld
 
         public override void OnCreateRoomFailed(short returnCode, string message)
         {
-            ErrorWindow.Load();
+            ErrorWindow.Load(message);
         }
     }
 }

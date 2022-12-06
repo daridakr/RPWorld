@@ -1,6 +1,6 @@
+using IJunior.TypedScenes;
 using Photon.Pun;
 using Photon.Realtime;
-using UnityEngine;
 using UnityEngine.Events;
 
 namespace Com.Daridakr.RPWorld
@@ -9,7 +9,10 @@ namespace Com.Daridakr.RPWorld
     {
         private string _gameVersion = "1";
 
-        public event UnityAction<ClientState> OnStateChanged;
+        public event UnityAction ConnectingToMaster;
+        public event UnityAction JoiningLobby;
+        public event UnityAction JoinedLobby;
+        public event UnityAction Disconnected;
 
         private void Awake()
         {
@@ -18,33 +21,38 @@ namespace Com.Daridakr.RPWorld
 
         private void Start()
         {
+            if (PhotonNetwork.IsConnected)
+            {
+                JoinedLobby.Invoke();
+                return;
+            }
+
             ConnectToMaster();
         }
 
         public void ConnectToMaster()
         {
             PhotonNetwork.ConnectUsingSettings();
+            ConnectingToMaster.Invoke();
             PhotonNetwork.GameVersion = _gameVersion;
-
-            OnStateChanged?.Invoke(PhotonNetwork.NetworkClientState);
         }
 
         public override void OnConnectedToMaster()
         {
             PhotonNetwork.JoinLobby();
+            JoiningLobby.Invoke();
 
-            OnStateChanged?.Invoke(PhotonNetwork.NetworkClientState);
         }
 
         public override void OnJoinedLobby()
         {
-            OnStateChanged?.Invoke(PhotonNetwork.NetworkClientState);
+            JoinedLobby.Invoke();
         }
 
         public override void OnDisconnected(DisconnectCause cause)
         {
-            Debug.Log(PhotonNetwork.NetworkClientState);
-            OnStateChanged?.Invoke(PhotonNetwork.NetworkClientState);
-        }  
+            Disconnected.Invoke();
+            ErrorWindow.Load(cause.ToString());
+        }
     }
 }

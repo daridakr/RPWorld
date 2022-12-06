@@ -1,4 +1,3 @@
-using Photon.Realtime;
 using TMPro;
 using UnityEngine;
 
@@ -11,40 +10,50 @@ namespace Com.Daridakr.RPWorld
 
         private TMP_Text _display;
 
-        private void OnEnable()
-        {
-            _source.OnStateChanged += OnClientStateChanged;
-        }
-
-        private void OnDisable()
-        {
-            _source.OnStateChanged -= OnClientStateChanged;
-        }
-
         private void Awake()
         {
             _display = GetComponent<TMP_Text>();
         }
 
-        private void OnClientStateChanged(ClientState state)
+        private void OnEnable()
         {
-            switch (state)
+            _source.ConnectingToMaster += OnConnectedToMaster;
+            _source.JoiningLobby += OnJoiningLobby;
+            _source.JoinedLobby += OnJoinedLobby;
+            _source.Disconnected += OnDisconnected;
+        }
+
+        private void OnDisable()
+        {
+            if (_source != null)
             {
-                case ClientState.ConnectingToNameServer:
-                    _display.text = $"Подключение к серверу...";
-                    break;
-                case ClientState.JoiningLobby:
-                    _display.text = $"Подключение к лобби...";
-                    break;
-                case ClientState.JoinedLobby:
-                    _display.text = $"Вы подключены.";
-                    _display.color= Color.green;
-                    break;
-                case ClientState.Disconnected:
-                    _display.text = $"Нет подключения.";
-                    _display.color = Color.red;
-                    break;
+                _source.ConnectingToMaster -= OnConnectedToMaster;
+                _source.JoiningLobby -= OnJoiningLobby;
+                _source.JoinedLobby -= OnJoinedLobby;
+                _source.Disconnected -= OnDisconnected;
             }
+        }
+
+        public void OnConnectedToMaster()
+        {
+            _display.text = $"Подключение к серверу...";
+        }
+
+        public void OnJoiningLobby()
+        {
+            _display.text = $"Подключение к лобби...";
+        }
+
+        public void OnJoinedLobby()
+        {
+            _display.text = $"Вы подключены.";
+            _display.color = Color.green;
+        }
+
+        public void OnDisconnected()
+        {
+            _display.text = $"Нет подключения.";
+            _display.color = Color.red;
         }
     }
 }
