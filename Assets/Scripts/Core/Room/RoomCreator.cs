@@ -22,7 +22,7 @@ namespace Com.Daridakr.RPWorld
             PhotonNetwork.CreateRoom(_title.text);
         }
 
-        public override void OnJoinedRoom()
+        public override void OnCreatedRoom()
         {
             IJunior.TypedScenes.Room.Load();
         }

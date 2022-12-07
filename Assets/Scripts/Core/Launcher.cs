@@ -41,7 +41,6 @@ namespace Com.Daridakr.RPWorld
         {
             PhotonNetwork.JoinLobby();
             JoiningLobby.Invoke();
-
         }
 
         public override void OnJoinedLobby()

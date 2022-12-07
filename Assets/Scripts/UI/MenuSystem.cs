@@ -11,9 +11,15 @@ namespace Com.Daridakr.RPWorld
             RoomCreating.Load();
         }
 
+        public void OnLeaveRoomButtonClick()
+        {
+            PhotonNetwork.LeaveRoom(this);
+            OnBackToLobbyButtonClick();
+        }
+
         public void OnBackToLobbyButtonClick()
         {
-            IJunior.TypedScenes.Lobby.Load();
+            Lobby.Load();
         }
 
         public void OnExitAppButtonClick()

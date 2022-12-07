@@ -2,7 +2,7 @@ using Photon.Pun;
 using TMPro;
 using UnityEngine;
 
-public class RoomView : MonoBehaviour
+public class RoomView : MonoBehaviourPunCallbacks
 {
     [SerializeField] private TMP_Text _roomName;
 
@@ -13,7 +13,6 @@ public class RoomView : MonoBehaviour
 
     public void Render()
     {
-        // проверить существует ли такая комната
         _roomName.text = PhotonNetwork.CurrentRoom.Name;
     }
 }
